@@ -1,0 +1,611 @@
+<%@LANGUAGE="VBSCRIPT"%>
+<!--#include virtual="/include/nkpmg_dbcon.asp" -->
+<!--#include virtual="/include/nkpmg_user.asp" -->
+<!--#include virtual="/include/db_create.asp" -->
+<!DOCTYPE HTML>
+<%
+Dim Rs
+Dim Repeat_Rows
+Dim from_date
+Dim to_date
+Dim as_process
+Dim cowork_yn
+Dim field_check
+Dim field_view
+Dim win_sw
+dim company_tab(160)
+
+win_sw = "close"
+be_pg = "as_list.asp"
+
+ck_sw=Request("ck_sw")
+Page=Request("page")
+
+If ck_sw = "y" Then
+	from_date = Request("from_date")
+	to_date = Request("to_date")
+	date_sw = Request("date_sw")
+	process_sw = Request("process_sw")
+	cowork_yn = Request("cowork_yn")
+	field_check = Request("field_check")
+	field_view = Request("field_view")
+	company = Request("company")
+Else
+	from_date=Request.form("from_date")
+	to_date=Request.form("to_date")
+	date_sw=Request.form("date_sw")
+	process_sw=Request.form("process_sw")
+	cowork_yn = Request("cowork_yn")
+	field_check=Request.form("field_check")
+	field_view=Request.form("field_view")
+	company=Request.form("company")
+End if
+
+If to_date = "" or from_date = "" Then
+	to_date = mid(cstr(now()),1,10)
+	from_date = mid(cstr(now()-15),1,10)
+	field_check = "total"
+	date_sw = "acpt"
+	process_sw = "A"
+	cowork_yn = "A"
+	company = "전체"
+End If
+
+If field_check = "total" Then
+	field_view = ""
+End If
+
+if field_check = "acpt_no" then
+'	if field_view > "9999999" or field_view < "0" then
+'	end if
+end if
+
+pgsize = 10 ' 화면 한 페이지
+
+If Page = "" Then
+	Page = 1
+	start_page = 1
+End If
+stpage = int((page - 1) * pgsize)
+
+' 조건별 조회.........
+' 날짜별 조회(1)
+base_sql = " SELECT acpt_no		      "&_
+           "      , acpt_man	      "&_
+           "      , as_type		      "&_
+           "      , acpt_date	      "&_
+           "      , as_process	      "&_
+           "      , acpt_user	      "&_
+           "      , as_memo		      "&_
+           "      , company		      "&_
+           "      , dept		      "&_
+           "      , tel_ddd		      "&_
+           "      , tel_no1		      "&_
+           "      , tel_no2		      "&_
+           "      , sido		      "&_
+           "      , gugun		      "&_
+           "      , request_date      "&_
+           "      , visit_date	      "&_
+           "      , mg_ce		      "&_
+           "      , asets_no	      "&_
+           "      , large_paper_no    "&_
+           "      , cowork_yn		  "&_
+           "   FROM  as_acpt          "
+
+if date_sw = "acpt" then
+'	date_sql = "where (CAST(acpt_date as date) >= '" + from_date  + "' and CAST(acpt_date as date) <= '" + to_date  + "') and (mg_group ='" + mg_group + "')"
+	date_sql = "WHERE (acpt_date BETWEEN str_to_date('" & from_date & " 000000','%Y-%m-%d %H%i%s') AND str_to_date('" & to_date & " 235959','%Y-%m-%d %H%i%s') ) "
+else
+'	date_sql = "where (visit_date >= '" + from_date  + "' and visit_date <= '" + to_date  + "') and (mg_group ='" + mg_group + "')"
+	date_sql = "WHERE (visit_date >= '" + from_date  + "' AND visit_date <= '" + to_date  + "') "
+end If
+
+if process_sw = "Y" then
+	process_sql = " AND ( as_process = '완료' OR as_process = '대체' OR as_process = '취소' ) "
+elseif  process_sw = "N" then
+	process_sql = " AND ( as_process = '접수' OR as_process = '연기' OR as_process = '입고' OR as_process = '대체입고' ) "
+else
+	process_sql = ""
+end if
+
+if cowork_yn = "Y" then
+	cowork_sql = " AND ( cowork_yn = 'Y' ) "
+elseif  cowork_yn = "N" then
+	cowork_sql = " AND ( cowork_yn = 'N' OR cowork_yn = ''  OR cowork_yn is null  ) "
+else
+	cowork_sql = ""
+end if
+
+if field_check <> "total" then
+	if field_check = "asets_no" then
+		field_sql = " AND ( " + field_check + " = '" + field_view + "' ) "
+    elseif field_check = "acpt_no" then
+		field_sql = " AND ( " + field_check + " = '"&field_view&"' ) "
+	else
+		field_sql = " AND ( " + field_check + " LIKE '%" + field_view + "%' ) "
+	end if
+else
+  	field_sql = " "
+end if
+order_sql = " ORDER BY acpt_date DESC"
+
+'sql = base_sql + date_sql + process_sql + field_sql + order_sql
+
+if company = "전체" then
+	com_sql = " "
+else
+  com_sql = " AND (company = '" + company + "') "
+end if
+
+Sql = "SELECT COUNT(*) FROM as_acpt " + date_sql + com_sql + process_sql + cowork_sql + field_sql
+Set RsCount = Dbconn.Execute (sql)
+
+tottal_record = clng(RsCount(0)) 'Result.RecordCount
+
+IF tottal_record mod pgsize = 0 THEN
+	total_page = int(tottal_record / pgsize) 'Result.PageCount
+ELSE
+	total_page = int((tottal_record / pgsize) + 1)
+END IF
+
+sql = base_sql + date_sql + com_sql + process_sql + cowork_sql + field_sql + order_sql + " limit "& stpage & "," &pgsize
+Rs.Open Sql, Dbconn, 1
+'Response.write Sql
+
+title_line = "A/S 총괄 현황"
+%>
+<!--<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">-->
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=euc-kr">
+		<title>A/S 관리 시스템</title>
+		<link href="/include/style.css" type="text/css" rel="stylesheet">
+		<link href="/include/jquery-ui.css" type="text/css" rel="stylesheet">
+        <script src="/java/jquery-1.9.1.js"></script>
+        <script src="/java/jquery-ui.js"></script>
+		<script src="/java/common.js" type="text/javascript"></script>
+		<script src="/java/ui.js" type="text/javascript"></script>
+		<script type="text/javascript" src="/java/js_form.js"></script>
+		<script type="text/javascript">
+			function getPageCode(){
+				return "0 1";
+			}
+
+			$(function() {  $( "#datepicker" ).datepicker();
+							$( "#datepicker" ).datepicker("option", "dateFormat", "yy-mm-dd" );
+							$( "#datepicker" ).datepicker("setDate", "<%=from_date%>" );
+			});
+
+			$(function() {  $( "#datepicker1" ).datepicker();
+							$( "#datepicker1" ).datepicker("option", "dateFormat", "yy-mm-dd" );
+							$( "#datepicker1" ).datepicker("setDate", "<%=to_date%>" );
+			});
+
+			function frmcheck () {
+				if (chkfrm()) {
+					document.frm.submit ();
+				}
+			}
+
+			function chkfrm() {
+				if (document.frm.field_check.value == "") {
+					alert ("필드조건을 선택하시기 바랍니다");
+					return false;
+				}
+				return true;
+			}
+
+			function field_check_change(sel)
+			{
+				/*
+				이거하니 문제가 있음.. 나는 되는데.. 박준호
+				if  (sel.value=="total")
+				{
+					document.getElementById('field_view').style.display = 'none';
+					document.getElementById('field_view').value = '';
+				}
+				else
+				{
+					document.getElementById('field_view').style.display = '';
+				}
+				*/
+				//console.log(sel.value)
+			}
+		</script>
+	</head>
+	<body>
+		<div id="wrap">
+			<!--#include virtual = "/include/header.asp" -->
+			<!--#include virtual = "/include/as_sub_menu.asp" -->
+			<div id="container">
+				<h3 class="tit"><%=title_line%></h3>
+				<form action="as_list.asp" method="post" name="frm">
+					<fieldset class="srch">
+						<legend>조회영역</legend>
+						<dl>
+							<dt>조건검색</dt>
+							<dd>
+								<p>
+                                <label>&nbsp; &nbsp; &nbsp;</label>
+                                <label>
+                                    <strong>처리상태 : </strong>
+                                        <input name="process_sw" type="radio" value="A"  <%If process_sw = "A" Then%>checked<%End If %> style="width:25px">전체
+                                        <input name="process_sw" type="radio" value="N"  <%If process_sw = "N" Then %>checked<%End If %> style="width:25px">미처리
+                                        <input name="process_sw" type="radio" value="Y"  <%If process_sw = "Y" Then %>checked<%End If %> style="width:25px">처리완료
+                                </label>
+                                <label>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                                </label>
+                                <label>
+                                    <strong>기간 기준: </strong>
+                                            <input type="radio" name="date_sw" value="acpt" <%If date_sw = "acpt" Then %>checked<%End If %> style="width:25px">접수일
+                                        <input type="radio" name="date_sw" value="visit" <%If date_sw = "visit" Then %>checked<%End If %> style="width:25px">완료일
+                                </label>
+                                <label>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                                </label>
+                                <label>
+                                    <strong>시작일 : </strong>
+                                    <input name="from_date" type="text" value="<%=from_date%>" style="width:70px" id="datepicker">
+                                </label>
+                                <label>
+                                    <strong>종료일 : </strong>
+                                    <input name="to_date" type="text" value="<%=to_date%>" style="width:70px" id="datepicker1">
+                                </label>
+                                <br>
+                                <label>&nbsp; &nbsp; &nbsp;</label>
+                                <label>
+                                    <strong>업무유형 : </strong>
+                                        <input name="cowork_yn" type="radio" value="A"  <% if cowork_yn = "A" then %>checked<% end if %> style="width:25px">전체
+                                        <input name="cowork_yn" type="radio" value="N"  <% if cowork_yn = "N" then %>checked<% end if %> style="width:25px">일반
+                                        <input name="cowork_yn" type="radio" value="Y"  <% if cowork_yn = "Y" then %>checked<% end if %> style="width:25px">협업
+                                </label>
+                                <label>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
+                                </label>
+                                <label>
+                                    <strong>조건 : </strong>
+                                    <select name="field_check" id="field_check" style="width:80px" onChange="field_check_change(this)">
+                                        <option value="total" <%If field_check = "total" Then %>selected<%End If %>>전체</option>
+                                        <option value="acpt_no" <%If field_check = "acpt_no" Then %>selected<%End If %>>접수번호</option>
+                                        <option value="as_type" <%If field_check = "as_type" Then %>selected<%End If %>>처리유형</option>
+                                        <option value="mg_ce_id" <%If field_check = "mg_ce_id" Then %>selected<%End If %>>담당CE ID</option>
+                                        <option value="mg_ce" <%If field_check = "mg_ce" Then %>selected<%End If %>>담당CE</option>
+                                        <option value="acpt_man" <%If field_check = "acpt_man" Then %>selected<%End If %>>접수자</option>
+                                        <option value="sido" <%If field_check = "sido" Then %>selected<%End If %>>시도</option>
+                                        <option value="gugun" <%If field_check = "gugun" Then %>selected<%End If %>>구군</option>
+                                        <option value="acpt_user" <%If field_check = "acpt_user" Then %>selected<%End If %>>사용자</option>
+                                        <option value="dept" <%If field_check = "dept" Then %>selected<%End If %>>조직명</option>
+                                        <option value="asets_no" <%If field_check = "asets_no" Then %>selected<%End If %>>자산번호</option>
+                                    </select>
+                                </label>
+                                <label>
+                                    <input name="field_view" type="text" value="<%=field_view%>" style="width:80px;" id="field_view" >
+                                </label>
+                                <label>&nbsp; &nbsp; &nbsp;
+                                </label>
+                                <label>
+                                    <strong>회사 : </strong>
+                                    <%
+                                    If c_grade = "7" Or (c_grade = "5" And c_reside = "1") Then
+
+                                        sql_trade = "SELECT trade_name "&_
+                                                    "  FROM trade "&_
+                                                    " WHERE (use_sw = 'Y') "&_
+                                                    "   AND (mg_group = '1' OR mg_group = '2') "&_
+                                                    "   AND (trade_name = '"+user_name+"') "&_
+                                                    " ORDER BY trade_name ASC"
+                                    End If
+
+                                    rs_trade.Open sql_trade, DBConn, 1
+                                    %>
+                                    <select name="company" id="company">
+                                        <option value="전체">전체</option>
+                                        <%
+                                        While Not rs_trade.EOF
+                                            %>
+                                            <option value='<%=rs_trade("trade_name")%>' <%If rs_trade("trade_name") = company  then %>selected<% end if %>><%=rs_trade("trade_name")%></option>
+                                            <%
+                                            rs_trade.MoveNext()
+                                        Wend
+                                        rs_trade.Close() : Set rs_trade = Nothing
+                                        %>
+                                    </select>
+                                </label>
+                                <a href="#" onclick="javascript:frmcheck();"><img src="/image/but_ser.jpg" alt="검색"></a>
+                                </p>
+							</dd>
+						</dl>
+					</fieldset>
+					<div class="gView">
+						<table cellpadding="0" cellspacing="0" class="tableList">
+							<colgroup>
+								<col width="6%" >
+								<col width="8%" >
+								<col width="4%" >
+								<col width="3%" >
+								<col width="5%" >
+								<col width="10%" >
+								<col width="10%" >
+								<col width="8%" >
+								<col width="11%" >
+								<col width="5%" >
+								<col width="5%" >
+								<col width="5%" >
+								<col width="*" >
+								<col width="3%" >
+							</colgroup>
+							<thead>
+								<tr>
+									<th class="first" scope="col">처리유형</th>
+									<th scope="col">
+							  		<%
+                                    If tottal_record <> 0 Then
+                                        'if (c_grade = "0") and (rs("as_process")="접수" or rs("as_process")="입고" or rs("as_process")="연기") then
+                                        If (user_id="100037" Or user_id = "100545" Or user_id = "102592") Or c_grade = "0" And process_sw = "N" Then
+                                            Response.write "접수일자(변경)"
+                                        Else
+                                            Response.write "접수일자"
+                                        End If
+                                    Else
+                                        Response.write "접수일자"
+                                    End If
+							  		%>
+                                    </th>
+                                    <th scope="col">협업<br>여부</th>
+                                    <th scope="col">상태</th>
+									<th scope="col">사용자</th>
+									<th scope="col">회사</th>
+									<th scope="col">
+                                    <%
+                                        if tottal_record <> 0 then
+                                            'if c_grade < "3" and (rs("as_process")="접수" or rs("as_process")="입고" or rs("as_process")="연기") then
+                                            If user_id = "100037" Or user_id = "102592" Or c_grade < "3" And process_sw = "N" Then
+                                                Response.Write "조직명(결과등록)"
+                                            Else
+                                                Response.Write "조직명"
+                                            End If
+                                        Else
+                                            Response.Write "조직명"
+                                        End If
+                                    %>
+									</th>
+									<th scope="col">
+                                    <%
+                                        If tottal_record <> 0 Then
+                                            ' if (c_grade < "3" or rs("acpt_man") = user_name ) and (rs("as_process")="접수" or rs("as_process")="입고" or rs("as_process")="연기") then
+                                            If (user_id="100037" Or user_id = "102592") Or (c_grade < "3") And (process_sw = "N") Then
+                                                Response.write "전화(수정)"
+                                            Else
+                                                Response.write "전화번호"
+                                            End If
+                                        Else
+                                            Response.write "전화번호"
+                                        End If
+                                    %>
+                                    </th>
+									<th scope="col">지역</th>
+									<th scope="col">요청일자</th>
+									<th scope="col">처리일자</th>
+									<th scope="col">담당CE</th>
+									<th scope="col">장애내용</th>
+									<th scope="col">조회</th>
+								</tr>
+							</thead>
+							<tbody>
+								<%
+								Dim len_date, hangle, bit01, bit02, bit03
+								Dim asProcYn, acptDateModeYn, asResultRegYn, asModYn
+
+								'접수일자 변경 권한
+								Select Case user_id
+									Case "100037", "100431", "100298", "100249", "102592", "100545"
+										acptDateModeYn = "Y"
+									Case Else
+										acptDateModeYn = "N"
+								End Select
+
+								'조직명 결과등록 권한
+								Select Case user_id
+									Case "100037", "100249", "100431", "100298", "101480", "102592", "102435"
+										asResultRegYn = "Y"
+									Case Else
+										asResultRegYn = "N"
+								End Select
+
+								'AS 내역 수정
+								Select Case user_id
+									Case "100037", "100249", "100431", "100298", "102592"
+										asModYn = "Y"
+									Case Else
+										asModYn = "N"
+								End Select
+
+                                Do Until rs.EOF
+                                    acpt_date = rs("acpt_date")
+                                    len_date = Len(acpt_date)
+                                    bit01 = Left(acpt_date, 10)
+                                    ' 	bit01 = Replace(bit01,"-",".")
+                                    bit03 = Left(Right(acpt_date, 5), 2)
+                                    hangle = Mid(acpt_date, 12, 2)
+
+                                    If len_date = 22 Then
+                                        bit02 = Mid(acpt_date, 15, 2)
+                                    Else
+                                        bit02 = "0" & Mid(acpt_date, 15, 1)
+                                    End If
+
+                                    If hangle = "오후" And bit02 <> 12 Then
+                                        bit02 = bit02 + 12
+                                    End If
+
+                                    date_to_date = bit01 & " " &bit02 & ":" & bit03
+                                    acpt_date = Mid(date_to_date, 3)
+                                    'acpt_date = replace(acpt_date,"-","/")
+
+                                    as_memo = Replace(rs("as_memo"), Chr(34), Chr(39))
+                                    view_memo = as_memo
+
+                                    If Len(as_memo) > 18 Then
+                                        view_memo = Mid(as_memo,1,18) + ".."
+                                    End If
+
+									Select Case rs("as_process")
+										Case "접수", "입고", "연기"
+											asProcYn = "Y"
+										Case Else
+											asProcYn = "N"
+									End Select
+
+                                    'If rs("as_process") = "접수" Or rs("as_process") = "연기" Or rs("as_process") = "입고" Then
+									If asProcYn = "Y" Then
+                                        visit_date = "."
+
+                                        If rs("as_process") = "입고" Then
+                                            sql_into = "SELECT  in_process 	"&_
+                                                        "      , into_date 	"&_
+                                                        "  FROM  as_into 		"&_
+                                                        " WHERE  acpt_no = "&rs("acpt_no")&_
+                                                        "   AND  in_process = '수리완료'"
+                                            Set rs_into=DbConn.Execute(sql_into)
+
+                                            If rs_into.eof Or rs_into.bof Then
+                                                visit_date = "."
+                                            Else
+                                                visit_date = rs_into("into_date")
+                                            End If
+                                            rs_into.close()
+                                        End If
+                                    Else
+                                        visit_date = Mid(rs("visit_date"),3)
+                                    End If
+								%>
+								<tr>
+									<td class="first"><%=rs("as_type")%></td>
+									<td>
+									<%
+										'If ((user_id="101100") Or (user_id="100037") Or (user_id="100431") Or (user_id="100298") Or (user_id="100249") Or user_id = "102592") Or ((c_grade = "0") And (rs( "as_process")="접수" Or rs("as_process")="입고" Or rs("as_process")="연기")) Then
+										If acptDateModeYn = "Y" Or ((c_grade = "0") And asProcYn = "Y") Then
+										%>
+											<a href="#" onClick="pop_Window('/acpt_date_mod.asp?acpt_no=<%=rs("acpt_no")%>','acpt_date_mod_pop','scrollbars=yes,width=600,height=250')"><%=acpt_date%></a>
+                                        <%
+										Else
+											Response.Write acpt_date
+                                        End If
+										%>
+                                    </td>
+                                    <td>
+									<%
+									If rs("cowork_yn") = "Y" Then
+										Response.Write "협업"
+									Else
+										Response.Write "일반"
+									End If
+									%>
+                                    </td>
+                                    <td>
+                                        <%
+                                        ' 2018.04.24 eulro.yoon
+                                        ' 완료 취소 처리 막음
+                                        'if (c_grade = "0") and (rs( "as_process")="완료") then
+                                        %>
+										<%If user_id="102305" Or user_id="102306" Or user_id = "102592" Or user_id = "100545" Then %>
+                                            <a href="#" onClick="pop_Window('/as_process_cancel.asp?acpt_no=<%=rs("acpt_no")%>','as_process_cancel_pop','scrollbars=yes,width=600,height=250')"><%=rs("as_process")%></a>
+										<%Else  %>
+											<%=rs("as_process")%>
+                                        <%End If%>
+                                    </td>
+                                    <td><%=rs("acpt_user")%></td>
+									<td><%=rs("company")%></td>
+									<td>
+								  	<%
+								  	'If (user_id="101100" Or user_id="100037" Or user_id="100249" Or user_id="100431" Or user_id="100298" Or user_id = "101480" Or user_id = "102592") Or (c_grade < "3" And (rs("as_process")="접수" Or rs("as_process")="입고" Or rs("as_process")="연기")) Then
+									If asResultRegYn = "Y" Or ((c_grade < "3") And asProcYn = "Y") Then
+								  	    If (rs("large_paper_no") = "" Or IsNull(rs("large_paper_no"))) Then
+								  	%>
+                        	                <a href="/as_result_reg.asp?acpt_no=<%=rs("acpt_no")%>&be_pg=<%=be_pg%>&page=<%=page%>&from_date=<%=from_date%>&to_date=<%=to_date%>&date_sw=<%=date_sw%>&process_sw=<%=process_sw%>&field_check=<%=field_check%>&field_view=<%=field_view%>&company=<%=company%>"><%=rs("dept")%></a>
+									<%	Else 	%>
+                                            <a href="#" onClick="pop_Window('large_result_reg.asp?acpt_no=<%=rs("acpt_no")%>&be_pg=<%=be_pg%>&page=<%=page%>&view_c=<%=view_c%>&dong=<%=dong%>&view_sort=<%=view_sort%>','lage_result_reg_popup','scrollbars=yes,width=750,height=450')"><%=rs("dept")%></a>
+                                    <%
+                                        End If
+                                    Else
+                                        Response.Write rs("dept")
+                                    End If
+                                    %>
+                                    </td>
+                                    <td>
+								  	<%
+									'If ((user_id="101100") or (user_id="100037") or (user_id="100249") or (user_id="100431") or (user_id="100298") Or user_id = "102592") or  (c_grade < "3" or rs("acpt_man") = user_name ) and (rs( "as_process")="접수" or rs("as_process")="입고" or rs("as_process")="연기") then
+									If asModYn = "Y" Or (c_grade < "3" Or rs("acpt_man") = user_name) And asProcYn = "Y" Then
+									%>
+								  		<a href="#" onClick="pop_Window('/as_mod_reg.asp?acpt_no=<%=rs("acpt_no")%>&be_pg=<%=be_pg%>&page=<%=page%>&from_date=<%=from_date%>&to_date=<%=to_date%>&date_sw=<%=date_sw%>&process_sw=<%=process_sw%>&field_check=<%=field_check%>&field_view=<%=field_view%>&company=<%=company%>','as_mod_pop','scrollbars=yes,width=1000,height=450')"><%=rs("tel_ddd")%>)<%=rs("tel_no1")%>-<%=rs("tel_no2")%></a>
+                                    <%Else %>
+                                        <%=rs("tel_ddd")%>)<%=rs("tel_no1")%>-<%=rs("tel_no2")%>
+                                    <%End If %>
+                                    </td>
+                                    <td><%=rs("sido")%>&nbsp;<%=rs("gugun")%></td>
+                                    <td><%=Mid(rs("request_date"),3)%></td>
+									<td><%=visit_date%></td>
+									<td><%=rs("mg_ce")%></td>
+							  	    <td class="left"><p style="cursor:pointer"><span title="<%=as_memo%>"><%=view_memo%></span></p></td>
+									<td>
+										<a href="#" onClick="pop_Window('/as_view.asp?acpt_no=<%=rs("acpt_no")%>','asview_pop','scrollbars=yes,width=800,height=700')">조회</a>
+									</td>
+								</tr>
+								<%
+                                    rs.MoveNext()
+                                Loop
+                                rs.Close() : Set rs = Nothing
+								%>
+							</tbody>
+						</table>
+					</div>
+
+					<%
+					 intstart = (Int((page-1)/10)*10) + 1
+					 intend = intstart + 9
+					first_page = 1
+
+					If intend > total_page Then
+						intend = total_page
+					End If
+                    %>
+                    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td width="15%">
+                                <div class="btnCenter"><a href="/service/excel_down_condi.asp?from_date=<%=from_date%>&to_date=<%=to_date%>&date_sw=<%=date_sw%>&process_sw=<%=process_sw%>&cowork_yn=<%=cowork_yn%>&field_check=<%=field_check%>&field_view=<%=field_view%>&company=<%=company%>" class="btnType04">엑셀다운로드</a></div>
+                            </td>
+                            <td>
+                                <div id="paging">
+                                    <a href="as_list.asp?page=<%=first_page%>&from_date=<%=from_date%>&to_date=<%=to_date%>&date_sw=<%=date_sw%>&process_sw=<%=process_sw%>&cowork_yn=<%=cowork_yn%>&field_check=<%=field_check%>&field_view=<%=field_view%>&ck_sw=<%="y"%>&company=<%=company%>">[처음]</a>
+                                    <%
+                                    if intstart > 1 then
+                                        %>
+                                        <a href="as_list.asp?page=<%=intstart -1%>&from_date=<%=from_date%>&to_date=<%=to_date%>&date_sw=<%=date_sw%>&process_sw=<%=process_sw%>&cowork_yn=<%=cowork_yn%>&field_check=<%=field_check%>&field_view=<%=field_view%>&ck_sw=<%="y"%>&company=<%=company%>">[이전]</a>
+                                        <%
+                                    end if
+
+                                    for i = intstart to intend
+                                        if i = int(page) then
+                                            Response.write "<b>["&i&"]</b>"
+                                    else
+                                        Response.write "<a href='as_list.asp?page="&i&"&from_date="&from_date&"&to_date="&to_date&"&date_sw="&date_sw&"&process_sw="&process_sw&"&cowork_yn="&cowork_yn&"&field_check="&field_check&"&field_view="&field_view&"&ck_sw=y&company="&company&"'>["&i&"]</a>"
+                                        end if
+                                    next
+
+                                    if 	intend < total_page then
+                                        Response.write "<a href='as_list.asp?page="&intend+1&"&from_date="&from_date&"&to_date="&to_date&"&date_sw="&date_sw&"&process_sw="&process_sw&"&cowork_yn="&cowork_yn&"&field_check="&field_check&"&field_view="&field_view&"&ck_sw=y&company="&company&"'>[다음]</a> <a href='as_list.asp?page="&total_page&"&from_date="&from_date&"&to_date="&to_date&"&date_sw="&date_sw&"&process_sw="&process_sw&"&cowork_yn="&cowork_yn&"&field_check="&field_check&"&field_view="&field_view&"&ck_sw=y&company="&company&"'>[마지막]</a>"
+                                    else
+                                        Response.write "[다음]&nbsp;[마지막]"
+                                    end if
+                                    %>
+                                </div>
+                            </td>
+                            <td width="15%"></td>
+                        </tr>
+                    </table>
+					<input type="hidden" name="user_id">
+					<input type="hidden" name="pass">
+				</form>
+			</div>
+		</div>
+	</body>
+</html>
+<!--#include virtual="/common/inc_footer.asp" -->
