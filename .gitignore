@@ -649,6 +649,9 @@ gradle-app.setting
 *.3dm
 *.max
 
+# PSD
+*.psd
+
 # End of https://www.toptal.com/developers/gitignore/api/images
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,python,pycharm,gradle,intellij,intellij+all,java,macos,microsoftoffice

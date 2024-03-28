@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>무제 문서</title>
+<script>
+$(function () {
+    var charts = [];
+    // color from d3.scale.category10() - https://github.com/mbostock/d3/wiki/Ordinal-Scales
+    var colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"];
+    Highcharts.setOptions({
+        colors: colors,
+        global : {
+          useUTC : false
+        }
+    });
+
+
+    function makeChart(divId, titleName, subTitle, data) {
+      var chart = new Highcharts.Chart({
+          chart: {
+              renderTo: divId,
+              type: 'line'
+//              defaultSeriesType: 'datetime',
+//              zoomType: 'x'
+          },
+          title: {
+              text: titleName
+          },
+          subtitle: {
+              text: subTitle
+          },
+          xAxis: {
+              categories: [1949,1955,1960,1966,1970,1975,1980,1985,1990,1995,2000,2005,2010]
+          },
+          yAxis: {
+              title: {
+                  text: titleName
+              }
+          },
+          plotOptions: {
+              series: {
+                  marker: {
+                      enabled: false
+                  },
+                  states: {
+                    hover: {
+                        //enabled: true,
+                        lineWidth: 5
+                    }
+                  },
+                  shadow: false,
+                  events: {
+                      mouseOver: function(event) {
+                          this.chart.series[this.index].graph.attr({ 
+                              style: 'opacity:1;z-index:99;'
+                          });
+                      },
+                      mouseOut: function(event) {
+                          this.chart.series[this.index].graph.attr({ 
+                              style: ''
+                          });
+                      },
+                      legendItemClick: function(event) {
+                          var seriesIndex = this.index;
+                          var series = this.chart.series;
+
+
+                          if (series.length <= 1) {
+                              return true;
+                          }
+
+
+                          var showAll = false;
+                          var checkIndex = 0;
+                          if (checkIndex == seriesIndex) {
+                                checkIndex = 1;
+                          }
+                          
+                          if (this.visible) {
+                             if (!series[checkIndex].visible) {
+                                 showAll = true;
+                             }
+                          }
+
+
+                          for (var i = 0; i < series.length; i++)
+                          {
+                              if (!showAll && series[i].index != seriesIndex)
+                              {
+                                  series[i].hide();
+                              } 
+                              else
+                              {
+                                  series[i].show();
+                              }
+                          }
+                          series = null;
+                          return false;
+                      }
+                  }
+              }
+          },
+          legend: {
+          },
+          tooltip: {
+              formatter: function() {
+                      return this.x +'년<br/>' +'<span style="color:'+ this.series.color + ';font-weight:bold;">' + this.series.name +'</span>' + '[<b>'+ Highcharts.numberFormat(this.y, 0) + '</b>]';
+              },
+              crosshairs: true
+          },
+          
+          series: data
+      }, function(chartObj) {
+        $.each(chartObj.legend.allItems, function(i, item) {
+          $.each(item.legendItem, function(j, element) {
+            if (!element) return;
+            $(element.element).hover(function(){
+              item.graph.attr({ 
+                style: 'opacity:1;z-index:99;'
+              });
+            }, function() {
+              item.graph.attr({ 
+                style: ''
+              });
+
+
+            });
+          });
+
+
+        });
+      });
+      return chart;
+    }
+    
+    var data=[{name:"남자", data:[737371,782461,1222695,1894739,2762190,3425991,4160059,4787720,5321357,5131249,4943550,4837112,4726028]},{name:"여자", data:[700299,786285,1222707,1898541,2763072,3453473,4190557,4838035,5281893,5085928,4910422,4925434,4905454]}];
+    makeChart("container", "총인구","서울특별시", data);
+
+
+});
+</script>
+</head>
+
+<body onload=makeChart();>
+</body>
+</html>
