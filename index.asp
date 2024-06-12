@@ -11,7 +11,7 @@
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 	  <tr>
 		<td align="center" valign="middle"><div id="div_aline">
-		  <div id="div_logo"><!--<img src="/image/nkp_title.gif" alt="(주)케이원" width="320" height="24" class="fr" /> <img src="/images/logo.gif" alt="(주)케이원" width="120" height="56" class="mt10" />-->
+		  <div id="div_logo">
 		    <div style="float:left;">
 		  	<img src="/images/logo_long_ko.png" alt="케이원" width="170" height="56" class="mt10" />
 			<img src="/images/nkp_title.gif" alt="Information Portal" width="219" height="23" class="fr1" />
@@ -37,14 +37,12 @@
 				</div>
 			  </div>
 			  <div id="text_login">
-				<!--<img src="/images/login_copyright.gif" width="390" height="40" alt=""/><br/>-->
 				<span>본 사이트는 (주)케이원에 소속된 임직원을 지원하는 인트라넷<br/>
 				사이트로서 다른 기업 및 일반일들께서는 이용하실 수 없습니다.</span>
 			  </div>
 			</div>
 		  </div>
 		  <div id="copyright">
-			<!--<img src="/images/copyright.gif" alt="" width="640" height="70" class="fr" />-->
 			<div style="margin-top:50px;">
 			<span style="font-size:11px;font-weight:bold;font-family:'Malgun Gothic';color:#888888;">
 				서울특별시 금천구 가산디지털2로 14, 대륭테크노타운 12차 1405호 / Copyright
@@ -58,4 +56,3 @@
 	</table>
 </body>
 </html>
-<!--#include virtual="/include/google_analytics.asp" -->

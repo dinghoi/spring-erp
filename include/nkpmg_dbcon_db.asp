@@ -23,10 +23,11 @@ Else
 	'Response.write "# DB : " & db_name & "<br/>"
 
 	db_host = "localhost"
-	db_name = "nkp"
+	db_name = "erp_db"
 	db_user = "root"
 	db_pass = "duckling"
 End If
 
-DBConnect = "DRIVER={MySQL ODBC 5.3 ansi Driver};SERVER="&db_host&";DATABASE="&db_name&";UID="&db_user&";PWD="&db_pass&";"
+'DBConnect = "DRIVER={MySQL ODBC 5.3 ansi Driver};SERVER="&db_host&";DATABASE="&db_name&";UID="&db_user&";PWD="&db_pass&";"
+DBConnect = "DRIVER={MariaDB ODBC 3.1 Driver};SERVER="&db_host&";DATABASE="&db_name&";UID="&db_user&";PWD="&db_pass&";"
 %>
