@@ -1,0 +1,114 @@
+<html layout:decorate="~{layout_member}">
+  <div layout:fragment="content" class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-7">
+        <div class="card shadow-lg border-0 rounded-lg mt-5">
+          <!-- input form start -->
+          <form
+            th:action="@{/member/signup}"
+            th:object="${signupForm}"
+            method="post"
+          >
+            <div class="card-header">
+              <h3 class="text-center font-weight-light my-4">Create Account</h3>
+            </div>
+            <!-- // Add this line to include the error fragment -->
+            <div th:replace="~{fragments/error :: errorFragment}" />
+            <div class="card-body">
+              <form>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <div class="form-floating mb-3 mb-md-0">
+                      <input
+                        class="form-control"
+                        id="inputFirstName"
+                        type="text"
+                        th:field="*{memName}"
+                        placeholder="Enter your korean name"
+                      />
+                      <label for="inputFirstName">korean name</label>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        class="form-control"
+                        id="inputLastName"
+                        type="text"
+                        th:field="*{engName}"
+                        placeholder="Enter your english name"
+                      />
+                      <label for="inputLastName">english name</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-floating mb-3">
+                  <input
+                    class="form-control"
+                    id="inputEmail"
+                    type="email"
+                    th:field="*{memEmail}"
+                    placeholder="name@example.com"
+                  />
+                  <label for="inputEmail">Email address</label>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <div class="form-floating mb-3 mb-md-0">
+                      <input
+                        class="form-control"
+                        id="inputPassword"
+                        type="password"
+                        th:field="*{password}"
+                        placeholder="Create a password"
+                      />
+                      <label for="inputPassword">Password</label>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-floating mb-3 mb-md-0">
+                      <input
+                        class="form-control"
+                        id="inputPasswordConfirm"
+                        type="password"
+                        th:field="*{confirmPassword}"
+                        placeholder="Confirm password"
+                      />
+                      <label for="inputPasswordConfirm">Confirm Password</label>
+                    </div>
+                  </div>
+                </div>
+                <!-- submit btn -->
+                <div class="mt-4 mb-0">
+                  <div class="d-grid">
+                    <!-- <a class="btn btn-primary btn-block" href="login.html"
+                      >Create Account</a
+                    > -->
+                    <input
+                      type="submit"
+                      value="Create Account"
+                      class="btn btn-primary btn-block"
+                    />
+                  </div>
+                  <!-- <div class="my-2 d-flex justify-content-end">
+                  <input
+                    type="submit"
+                    value="Create Account"
+                    class="btn btn-primary btn-block"
+                  />
+                  </div> -->
+                </div>
+              </form>
+            </div>
+          </form>
+          <!-- input form end -->
+          <div class="card-footer text-center py-3">
+            <div class="small">
+              <a th:href="@{/member/login}">Have an account? Go to login</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</html>

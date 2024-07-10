@@ -1,0 +1,11 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.6/dist/web/static/pretendard.css");
+
+body {
+    /* 사용할 폰트의 이름 */
+    font-family: "Pretendard", sans-serif !important;
+    font-display: fallback;
+
+    /* 사용할 폰트의 기본 스타일 */
+    font-weight: 400;
+    font-style: normal;
+}

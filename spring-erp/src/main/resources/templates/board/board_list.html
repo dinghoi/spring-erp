@@ -1,0 +1,98 @@
+<html layout:decorate="~{layout}">
+  <!-- <div layout:fragment="content" class="container my-3">
+    <div class="border">
+      <div class="rounded bg-light bg-gradient m-3 p-2 fw-bold text-center">
+        <a class="text-decoration-none text-dark" th:href="@{/board/create}"
+          >무슨 생각을 하고 계신가요?</a
+        >
+      </div>
+    </div>
+    <h2 class="fw-bold my-3">전체 글 보기</h2>
+    <div class="my-3">
+      <div calss="border-bottom" th:each="board: ${boardList}">
+        <div class="d-flex">
+          <h5>
+            <a
+              class="fw-bold text-decoration-none text-dark"
+              th:href="@{|/board/detail/${board.boardSeq}|}"
+              th:text="${board.boardTitle}"
+            >
+            </a>
+          </h5>
+        </div>
+
+        <div class="d-flex">
+          <span
+            class="text-secondary"
+            th:text="${#temporals.format(board.createdDate, 'yyyy년MM월dd일 HH:mm:ss')}"
+          >
+          </span>
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+  <div layout:fragment="content" class="container-fluid px-4">
+    <h1 class="mt-4">사내 게시판</h1>
+    <ol class="breadcrumb mb-4">
+      <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+      <li class="breadcrumb-item active">사내 게시판</li>
+    </ol>
+    <div class="card mb-4">
+      <div class="card-body">
+        <!-- DataTables is a third party plugin that is used to generate the demo
+        table below. For more information about DataTables, please visit the
+        <a target="_blank" href="https://datatables.net/"
+          >official DataTables documentation</a
+        >
+        . -->
+        <a class="text-decoration-none text-dark" th:href="@{/board/create}">
+          글 등록
+        </a>
+      </div>
+    </div>
+    <div class="card mb-4">
+      <div class="card-header">
+        <i class="fas fa-table me-1"></i>
+        DataTable Example
+      </div>
+      <div class="card-body">
+        <table id="datatablesSimple">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Content</th>
+              <th>ReadCnt</th>
+              <th>CreatedDate</th>
+              <!-- <th>Start date</th>
+              <th>Salary</th> -->
+            </tr>
+          </thead>
+          <tfoot>
+            <tr>
+              <th>Title</th>
+              <th>Content</th>
+              <th>ReadCnt</th>
+              <th>CreatedDate</th>
+              <!-- <th>Start date</th>
+              <th>Salary</th> -->
+            </tr>
+          </tfoot>
+          <tbody>
+            <tr th:each="board: ${boardList}">
+              <td th:text="${board.boardTitle}"></td>
+              <td th:text="${board.boardContent}"></td>
+              <td th:text="${board.readCnt}"></td>
+              <td
+                th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd HH:mm:ss')}"
+              ></td>
+
+              <!-- <td>2011/04/25</td>
+              <td>$320,800</td> -->
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</html>
