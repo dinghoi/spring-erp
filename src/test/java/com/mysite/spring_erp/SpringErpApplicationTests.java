@@ -71,10 +71,10 @@ class SpringErpApplicationTests {
 
 		// 데이터 수정
 		// Optional: 값이 있을 수도 있고 없을 수도 있음, 값이 있으면 get()으로 값을 가져옴
-		Optional<EmpBoard> oa = this.boardRepository.findById(1L);
+		Optional<EmpBoard> oa = this.boardRepository.findById(1);
 		assertTrue(oa.isPresent());
 		EmpBoard b = oa.get();
-		b.setBoardTitle("수정된 제목");
+		b.setTitle("수정된 제목");
 		this.boardRepository.save(b);
 	}
 }

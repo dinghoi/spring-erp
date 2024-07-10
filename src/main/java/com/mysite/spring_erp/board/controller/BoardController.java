@@ -45,7 +45,8 @@ public class BoardController {
     // 게시글 상세 조회
     @GetMapping("/detail/{id}")
     @PreAuthorize("isAuthenticated()")
-    public String board_detail(Model model, @PathVariable("id") Long id) {
+    public String board_detail(Model model, @PathVariable("id") Integer id) {
+        boardService.increaseReadCnt(id); // 게시글 조회수 증가
         EmpBoard board = this.boardService.getBoard(id);
         model.addAttribute("board", board);
         return "board/board_detail";
@@ -75,8 +76,8 @@ public class BoardController {
         if (bindingResult.hasErrors()) {
             return "board/board_form";
         }
-        EmpMaster writer = this.masterService.getEmpMaster(principal.getName());
-        this.boardService.saveBoard(boardForm.getBoardTitle(), boardForm.getBoardContent(), writer);
+        EmpMaster id = this.masterService.getEmpMaster(principal.getName());
+        this.boardService.saveBoard(boardForm.getBoardTitle(), boardForm.getBoardContent(), id);
 
         return "redirect:/board/list"; // 게시글 작성 후 게시글 목록으로 이동
     }

@@ -1,5 +1,7 @@
 package com.mysite.spring_erp.member.controller;
 
+import java.security.Principal;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.mysite.spring_erp.member.entity.EmpMaster;
 import com.mysite.spring_erp.member.form.SignupForm;
 import com.mysite.spring_erp.member.service.MasterService;
 import com.mysite.spring_erp.member.service.MemberService;
@@ -50,12 +53,15 @@ public class MasterController {
         // 회원가입 처리
         try {
             this.empMasterService.saveEmpMaster(
+                    signupForm.getMemName(),
                     signupForm.getPassword());
 
+            EmpMaster empMaster = this.empMasterService.getLatestEmpMaster();
+
             this.empMemberService.saveEmpMember(
-                    signupForm.getMemName(),
                     signupForm.getEngName(),
-                    signupForm.getMemEmail());
+                    signupForm.getMemEmail(),
+                    empMaster);
         } catch (DataIntegrityViolationException e) {
             bindingResult.reject(
                     "alreadyInUser",

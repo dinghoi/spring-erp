@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.mysite.spring_erp.board.entity.EmpBoard;
 
-public interface BoardRepository extends JpaRepository<EmpBoard, Long> {
-    EmpBoard findByBoardTitleAndBoardContent(String boardTitle, String boardCotent);
+public interface BoardRepository extends JpaRepository<EmpBoard, Integer> {
+    // EmpBoard findByBoardTitleAndBoardContent(String title, String content);
 
-    List<EmpBoard> findByBoardTitleLike(String boardTitle);
+    // List<EmpBoard> findByBoardTitleLike(String title);
 }

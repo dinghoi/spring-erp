@@ -40,24 +40,15 @@
       </li>
       <li class="breadcrumb-item active">사내 게시판</li>
     </ol>
-    <!-- <div class="card mb-4">
-      <div class="card-body">
-        <a class="text-decoration-none text-dark" th:href="@{/board/create}">
-          글 등록
-        </a>
-      </div>
-    </div> -->
     <div class="card mb-4">
-      <!-- <div class="card-header">
-        <i class="fas fa-table me-1"></i>
-        DataTable Example
-      </div> -->
       <div class="card-body">
         <table id="datatablesSimple">
           <thead>
             <tr>
+              <th>No</th>
               <th>Title</th>
               <th>Content</th>
+              <th>writer</th>
               <th>ReadCnt</th>
               <th>CreatedDate</th>
               <!-- <th>Start date</th>
@@ -66,8 +57,10 @@
           </thead>
           <tfoot>
             <tr>
+              <th>No</th>
               <th>Title</th>
               <th>Content</th>
+              <th>writer</th>
               <th>ReadCnt</th>
               <th>CreatedDate</th>
               <!-- <th>Start date</th>
@@ -75,12 +68,26 @@
             </tr>
           </tfoot>
           <tbody>
-            <tr th:each="board: ${boardList}">
-              <td th:text="${board.boardTitle}"></td>
-              <td th:text="${board.boardContent}"></td>
-              <td th:text="${board.readCnt}"></td>
+            <tr th:each="board, status : ${boardList}">
+              <td>
+                <span th:text="${status.index + 1}"></span>
+              </td>
+              <td>
+                <a th:href="@{|/board/detail/${board.id}|}">
+                  <span
+                    th:text="${#strings.length(board.title) > 10 ? #strings.substring(board.title, 0, 10) + '...' : board.title}"
+                  ></span>
+                </a>
+              </td>
+              <td>
+                <span
+                  th:text="${#strings.length(board.content) > 20 ? #strings.substring(board.content, 0, 20) + '...' : board.content}"
+                ></span>
+              </td>
+              <td></td>
+              <td th:text="${board.readcnt}"></td>
               <td
-                th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd HH:mm:ss')}"
+                th:text="${#temporals.format(board.created, 'yyyy/MM/dd')}"
               ></td>
 
               <!-- <td>2011/04/25</td>
@@ -89,7 +96,7 @@
           </tbody>
         </table>
       </div>
-      <div class="card-footer">
+      <div class="card-footer d-flex justify-content-end">
         <button
           type="button"
           class="btn btn-primary btn-sm"

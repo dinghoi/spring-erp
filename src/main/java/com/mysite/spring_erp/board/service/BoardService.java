@@ -34,7 +34,7 @@ public class BoardService {
     }
 
     // 게시글 상세 조회
-    public EmpBoard getBoard(Long id) {
+    public EmpBoard getBoard(int id) {
         Optional<EmpBoard> board = this.boardRepository.findById(id);
         if (board.isPresent()) {
             return board.get();
@@ -44,13 +44,21 @@ public class BoardService {
     }
 
     // 게시글 저장
-    public void saveBoard(String title, String content, EmpMaster writer) {
+    public void saveBoard(String title, String content, EmpMaster name) {
         EmpBoard board = new EmpBoard();
-        board.setBoardTitle(title);
-        board.setBoardContent(content);
-        board.setWriter(writer);
-        board.setCreatedDate(LocalDateTime.now());
-        board.setUpdatedDate(LocalDateTime.now());
+        board.setTitle(title);
+        board.setContent(content);
+        board.setEmpMaster(name);
+        board.setCreated(LocalDateTime.now());
+        board.setUpdated(LocalDateTime.now());
+        this.boardRepository.save(board);
+    }
+
+    public void increaseReadCnt(int id) {
+        // 게시글 조회수 증가
+        EmpBoard board = boardRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid boardSeq:" + id)); // 게시글이 존재하지 않으면 예외 발생
+        board.setReadcnt(board.getReadcnt() + 1); // 조회수 증가
         this.boardRepository.save(board);
     }
 }

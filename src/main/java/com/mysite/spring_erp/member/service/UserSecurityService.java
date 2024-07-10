@@ -26,7 +26,7 @@ public class UserSecurityService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<EmpMaster> _user = this.masterRepository.findByEmpNo(username);
+        Optional<EmpMaster> _user = this.masterRepository.findByEmpno(username);
 
         System.out.println(username);
 
@@ -43,7 +43,7 @@ public class UserSecurityService implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority(UserRole.USER.getCode()));
         }
 
-        return new User(empMaster.getEmpNo(), empMaster.getEmpPwd(), authorities);
+        return new User(empMaster.getNo(), empMaster.getPwd(), authorities);
 
     }
 }

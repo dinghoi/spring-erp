@@ -10,6 +10,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,17 +23,19 @@ import lombok.Setter;
 public class EmpMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memSeq;
+    @Column(name = "mem_seq")
+    private int id;
 
-    @Column(length = 20, nullable = false)
-    private String memName;
+    @Column(name = "eng_name", length = 30)
+    private String ename;
 
-    @Column(length = 30)
-    private String engName;
-
-    @Column(length = 30, nullable = false, unique = true)
-    private String memEmail;
+    @Column(name = "mem_email", length = 30, nullable = false, unique = true)
+    private String email;
 
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
+
+    @OneToOne
+    @JoinColumn(name = "emp_seq")
+    private EmpMaster empMaster;
 }

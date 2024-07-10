@@ -19,14 +19,25 @@ public class MasterService {
     private final MasterRepository empMasterRepository;
     private final PasswordEncoder passwordEncoder;
 
+    // 마지막 사원번호 조회
+    public EmpMaster getLatestEmpMaster() {
+        Optional<EmpMaster> latestMaster = this.empMasterRepository.findTopByOrderByEmpNoDesc();
+        if (latestMaster.isPresent()) {
+            return latestMaster.get();
+        } else {
+            throw new DataNotFoundException("user not found");
+        }
+    }
+
     // 회원 정보 저장
-    public EmpMaster saveEmpMaster(String empPwd) {
+    public EmpMaster saveEmpMaster(String name, String pwd) {
         EmpMaster master = new EmpMaster();
         // master.setEmpNo(empNo);
 
         // BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         // master.setEmpPwd(passwordEncoder.encode(emp_pwd));
-        master.setEmpPwd(this.passwordEncoder.encode(empPwd));
+        master.setName(name);
+        master.setPwd(this.passwordEncoder.encode(pwd));
 
         master.setCreatedDate(LocalDateTime.now());
         master.setUpdatedDate(LocalDateTime.now());
@@ -37,7 +48,7 @@ public class MasterService {
 
     // 회원 정보 조회
     public EmpMaster getEmpMaster(String username) {
-        Optional<EmpMaster> master = this.empMasterRepository.findByEmpNo(username);
+        Optional<EmpMaster> master = this.empMasterRepository.findByEmpno(username);
         if (master.isPresent()) {
             return master.get();
         } else {
