@@ -10942,7 +10942,7 @@ body {
 /* 사이드 메뉴 조절 */
 .sb-nav-fixed #layoutSidenav #layoutSidenav_nav {
   /* width: 225px; */
-  width: 180px;
+  width: 210px;
   height: 100vh;
   z-index: 1038;
 }
@@ -10955,8 +10955,8 @@ body {
 .sb-nav-fixed #layoutSidenav #layoutSidenav_content {
   /* padding-left: 225px;
   top: 56px; */
-  padding-left: 200px;
-  top: 40px;
+  padding-left: 225px;
+  top: 45px;
 }
 
 #layoutError {

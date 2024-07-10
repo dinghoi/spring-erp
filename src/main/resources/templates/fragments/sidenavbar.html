@@ -3,13 +3,13 @@
     <div class="sb-sidenav-menu">
       <div class="nav">
         <div class="sb-sidenav-menu-heading">Core</div>
-        <a class="nav-link" href="index.html">
+        <a class="nav-link" th:href="@{/dashboard/index}">
           <div class="sb-nav-link-icon">
             <i class="fas fa-tachometer-alt"></i>
           </div>
           Dashboard
         </a>
-        <div class="sb-sidenav-menu-heading">Interface</div>
+        <div class="sb-sidenav-menu-heading">Service</div>
         <a
           class="nav-link collapsed"
           href="#"
@@ -21,7 +21,7 @@
           <div class="sb-nav-link-icon">
             <i class="fas fa-columns"></i>
           </div>
-          Layouts
+          인사 관리
           <div class="sb-sidenav-collapse-arrow">
             <i class="fas fa-angle-down"></i>
           </div>
@@ -33,12 +33,11 @@
           data-bs-parent="#sidenavAccordion"
         >
           <nav class="sb-sidenav-menu-nested nav">
-            <a class="nav-link" href="layout-static.html">Static Navigation</a>
-            <a class="nav-link" href="layout-sidenav-light.html"
-              >Light Sidenav</a
-            >
+            <a class="nav-link" href="#!">조직 관리</a>
+            <a class="nav-link" href="#!">직원 관리</a>
           </nav>
         </div>
+        <!-- 급여 관리 -->
         <a
           class="nav-link collapsed"
           href="#"
@@ -50,7 +49,7 @@
           <div class="sb-nav-link-icon">
             <i class="fas fa-book-open"></i>
           </div>
-          Pages
+          급여 관리
           <div class="sb-sidenav-collapse-arrow">
             <i class="fas fa-angle-down"></i>
           </div>
@@ -73,7 +72,7 @@
               aria-expanded="false"
               aria-controls="pagesCollapseAuth"
             >
-              Authentication
+              급(상)여 관리
               <div class="sb-sidenav-collapse-arrow">
                 <i class="fas fa-angle-down"></i>
               </div>
@@ -85,12 +84,12 @@
               data-bs-parent="#sidenavAccordionPages"
             >
               <nav class="sb-sidenav-menu-nested nav">
-                <a class="nav-link" href="login.html">Login</a>
-                <a class="nav-link" href="register.html">Register</a>
-                <a class="nav-link" href="password.html">Forgot Password</a>
+                <a class="nav-link" href="#!">급여지급현황</a>
+                <a class="nav-link" href="#!">급여입력</a>
+                <!-- <a class="nav-link" href="password.html">Forgot Password</a> -->
               </nav>
             </div>
-            <a
+            <!-- <a
               class="nav-link collapsed"
               href="#"
               data-bs-toggle="collapse"
@@ -114,20 +113,20 @@
                 <a class="nav-link" href="404.html">404 Page</a>
                 <a class="nav-link" href="500.html">500 Page</a>
               </nav>
-            </div>
+            </div> -->
           </nav>
         </div>
-        <div class="sb-sidenav-menu-heading">Addons</div>
-        <a class="nav-link" href="charts.html">
+        <div class="sb-sidenav-menu-heading">게시판</div>
+        <a class="nav-link" th:href="@{/board/list}">
           <div class="sb-nav-link-icon">
             <i class="fas fa-chart-area"></i>
           </div>
-          Charts
+          사내 게시판
         </a>
-        <a class="nav-link" href="tables.html">
+        <!-- <a class="nav-link" href="#!">
           <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
           Tables
-        </a>
+        </a> -->
       </div>
     </div>
     <div class="sb-sidenav-footer">

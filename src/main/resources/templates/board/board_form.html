@@ -9,90 +9,30 @@
       >
         <div th:each="err: ${#fields.allErrors()}" th:text="${err}"></div>
       </div>
-      <div class="mb-3">
+      <div class="input-group input-group-sm mb-3">
+        <span class="input-group-text" id="basic-addon1">제 목</span>
         <input
           type="text"
+          class="form-control"
           name="boardTitle"
           id="boardTitle"
-          class="form-control"
-          placeholder="제목"
+          aria-label="Username"
+          aria-describedby="basic-addon1"
         />
       </div>
-      <div class="mb-3">
+      <div class="input-group input-group-sm">
+        <span class="input-group-text">내 용</span>
         <textarea
+          class="form-control"
           name="boardContent"
           id="boardContent"
-          class="form-control"
+          aria-label="With textarea"
           rows="10"
-          placeholder="내용을 입력하세요."
         ></textarea>
       </div>
       <div class="my-2 d-flex justify-content-end">
-        <input type="submit" value="등록하기" class="btn btn-primary" />
+        <input type="submit" value="등록하기" class="btn btn-primary btn-sm" />
       </div>
     </form>
-
-    <div class="card card-primary card-outline mb-4">
-      <!--begin::Header-->
-      <div class="card-header">
-        <div class="card-title">Quick Example</div>
-      </div>
-      <!--end::Header-->
-      <!--begin::Form-->
-      <form>
-        <!--begin::Body-->
-        <div class="card-body">
-          <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label"
-              >Email address</label
-            >
-            <input
-              type="email"
-              class="form-control"
-              id="exampleInputEmail1"
-              aria-describedby="emailHelp"
-            />
-            <div id="emailHelp" class="form-text">
-              We'll never share your email with anyone else.
-            </div>
-          </div>
-          <div class="mb-3">
-            <label for="exampleInputPassword1" class="form-label"
-              >Password</label
-            >
-            <input
-              type="password"
-              class="form-control"
-              id="exampleInputPassword1"
-            />
-          </div>
-          <div class="input-group mb-3">
-            <input type="file" class="form-control" id="inputGroupFile02" />
-            <label class="input-group-text" for="inputGroupFile02"
-              >Upload</label
-            >
-          </div>
-          <div class="mb-3 form-check">
-            <input
-              type="checkbox"
-              class="form-check-input"
-              id="exampleCheck1"
-            />
-            <label class="form-check-label" for="exampleCheck1"
-              >Check me out</label
-            >
-          </div>
-        </div>
-        <!--end::Body-->
-        <!--begin::Footer-->
-        <div class="card-footer">
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </div>
-        <!--end::Footer-->
-      </form>
-      <!--end::Form-->
-    </div>
-    <!--end::Quick Example-->
-    <!--begin::Input Group-->
   </div>
 </html>
