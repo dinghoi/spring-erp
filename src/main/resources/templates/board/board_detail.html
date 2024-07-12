@@ -1,7 +1,7 @@
 <html layout:decorate="~{layout}">
   <div layout:fragment="content" class="container my-3">
-    <h2 th:text="|제목: ${board.boardTitle}|"></h2>
-    <p th:text="${board.createdDate}"></p>
-    <p th:text="${board.boardContent}"></p>
+    <h2 th:text="|제목: ${board.title}|"></h2>
+    <p th:text="${#temporals.format(board.created, 'yyyy/MM/dd HH:mm:ss')}"></p>
+    <p th:text="${board.content}"></p>
   </div>
 </html>

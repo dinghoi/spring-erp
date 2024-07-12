@@ -21,7 +21,7 @@ public class MasterService {
 
     // 마지막 사원번호 조회
     public EmpMaster getLatestEmpMaster() {
-        Optional<EmpMaster> latestMaster = this.empMasterRepository.findTopByOrderByEmpNoDesc();
+        Optional<EmpMaster> latestMaster = this.empMasterRepository.findTopByOrderByNoDesc();
         if (latestMaster.isPresent()) {
             return latestMaster.get();
         } else {
@@ -48,7 +48,7 @@ public class MasterService {
 
     // 회원 정보 조회
     public EmpMaster getEmpMaster(String username) {
-        Optional<EmpMaster> master = this.empMasterRepository.findByEmpno(username);
+        Optional<EmpMaster> master = this.empMasterRepository.findByNo(username);
         if (master.isPresent()) {
             return master.get();
         } else {
