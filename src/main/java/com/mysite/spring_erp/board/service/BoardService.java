@@ -54,11 +54,20 @@ public class BoardService {
         this.boardRepository.save(board);
     }
 
+    // 게시글 조회수 증가
     public void increaseReadCnt(int id) {
         // 게시글 조회수 증가
         EmpBoard board = boardRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid boardSeq:" + id)); // 게시글이 존재하지 않으면 예외 발생
         board.setReadcnt(board.getReadcnt() + 1); // 조회수 증가
+        this.boardRepository.save(board);
+    }
+
+    // 게시글 수정
+    public void updateBoard(EmpBoard board, String title, String content) {
+        board.setTitle(title);
+        board.setContent(content);
+        board.setUpdated(LocalDateTime.now());
         this.boardRepository.save(board);
     }
 }

@@ -1,7 +1,94 @@
 <html layout:decorate="~{layout}">
-  <div layout:fragment="content" class="container my-3">
-    <h2 th:text="|제목: ${board.title}|"></h2>
-    <p th:text="${#temporals.format(board.created, 'yyyy/MM/dd HH:mm:ss')}"></p>
-    <p th:text="${board.content}"></p>
+  <div layout:fragment="content" class="container-fluid px-4">
+    <h1 class="mt-4">사내 게시판</h1>
+    <ol class="breadcrumb mb-4">
+      <li class="breadcrumb-item">
+        <a th:href="@{/dashboard/index}">Dashboard</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a th:href="@{/board/list}">사내게시판</a>
+      </li>
+      <li class="breadcrumb-item active">게시글 상세</li>
+    </ol>
+    <div class="card mb-4">
+      <div class="card-body">
+        <!-- 상세 내용 -->
+        <div class="two_third first" style="height: auto">
+          <div class="col-lg-12">
+            <div class="two_third first">
+              <table class="table">
+                <tr>
+                  <td colspan="2">
+                    <div class="small">
+                      <div>
+                        <b>작성자</b> :
+                        <span th:text="${board.empMaster.name}"></span> |
+                        <b>조회수</b> :
+                        <span th:text="${board.readcnt}"></span> |
+                        <b>등록일자</b> :
+                        <span
+                          th:text="${#temporals.format(board.created, 'yyyy/MM/dd HH:mm:ss')}"
+                        ></span>
+                        | <b>수정일자</b> :
+                        <span
+                          th:text="${#temporals.format(board.updated, 'yyyy/MM/dd HH:mm:ss')}"
+                        ></span>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th width="10%" class="text-start" id="th-title-color">
+                    제 목
+                  </th>
+                  <td th:text="${board.title}"></td>
+                </tr>
+                <tr>
+                  <th width="10%" class="text-start" id="th-title-color">
+                    내 용
+                  </th>
+                  <td>
+                    <p th:text="${board.content}"></p>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2" class="text-end">
+                    <div class="wrap">
+                      <span
+                        th:if="${board.empMaster.no != null and #authentication.getPrincipal().getUsername() == board.empMaster.no}"
+                      >
+                        <input
+                          type="button"
+                          value="수정"
+                          class="button"
+                          id="modBtn"
+                          th:onclick="|location.href='@{|/board/modify/${board.id}'|}"
+                        />
+                        <input
+                          type="button"
+                          value="삭제"
+                          class="button"
+                          id="delBtn"
+                          th:href="@{|/board/delete/${board.id}|}"
+                        />
+                      </span>
+                      <span>
+                        <input
+                          type="button"
+                          value="취소"
+                          class="button"
+                          onclick="javascipt:history.back()"
+                        />
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!-- 상세 내용 end -->
+      </div>
+    </div>
   </div>
 </html>

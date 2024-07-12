@@ -1,38 +1,87 @@
 <html layout:decorate="~{layout}">
   <div layout:fragment="content" class="container">
-    <form th:action="@{/board/create}" th:object="${boardForm}" method="post">
-      <h3 class="my-3">새 글 등록</h3>
-      <div
-        class="alert alert-danger"
-        role="alert"
-        th:if="${#fields.hasAnyErrors()}"
-      >
-        <div th:each="err: ${#fields.allErrors()}" th:text="${err}"></div>
+    <h1 class="mt-4">사내 게시판</h1>
+    <ol class="breadcrumb mb-4">
+      <li class="breadcrumb-item">
+        <a th:href="@{/dashboard/index}">Dashboard</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a th:href="@{/board/list}">사내게시판</a>
+      </li>
+      <li class="breadcrumb-item active">글 등록</li>
+    </ol>
+    <div class="card mb-4">
+      <div class="card-body">
+        <form th:object="${boardForm}" method="post">
+          <input
+            type="hidden"
+            th:name="${_csrf.parameterName}"
+            th:value="${_csrf.token}"
+          />
+          <!-- 상세 내용 -->
+          <div class="two_third first" style="height: auto">
+            <div class="col-lg-12">
+              <div class="two_third first">
+                <table class="table">
+                  <tr>
+                    <th width="10%" class="text-start" id="th-title-color">
+                      제 목
+                    </th>
+                    <td>
+                      <input
+                        type="text"
+                        name="boardTitle"
+                        size="100"
+                        class="input-sm"
+                        id="boardTitle"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th
+                      width="10%"
+                      class="text-start"
+                      id="th-title-color"
+                      name="boardContent"
+                    >
+                      내 용
+                    </th>
+                    <td>
+                      <textarea
+                        rows="10"
+                        cols="100"
+                        name="boardContent"
+                        id="boardContent"
+                      ></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2" class="text-end">
+                      <div class="wrap">
+                        <input
+                          type="submit"
+                          value="등록"
+                          class="button"
+                          id="modBtn"
+                        />
+                        <input
+                          type="button"
+                          value="취소"
+                          class="button"
+                          onclick="javascipt:history.back()"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <!-- 상세 내용 end -->
+        </form>
+        <!-- card-body -->
       </div>
-      <div class="input-group input-group-sm mb-3">
-        <span class="input-group-text" id="basic-addon1">제 목</span>
-        <input
-          type="text"
-          class="form-control"
-          name="boardTitle"
-          id="boardTitle"
-          aria-label="Username"
-          aria-describedby="basic-addon1"
-        />
-      </div>
-      <div class="input-group input-group-sm">
-        <span class="input-group-text">내 용</span>
-        <textarea
-          class="form-control"
-          name="boardContent"
-          id="boardContent"
-          aria-label="With textarea"
-          rows="10"
-        ></textarea>
-      </div>
-      <div class="my-2 d-flex justify-content-end">
-        <input type="submit" value="등록하기" class="btn btn-primary btn-sm" />
-      </div>
-    </form>
+    </div>
+    <!-- container end -->
   </div>
 </html>
