@@ -3,7 +3,9 @@ package com.mysite.spring_erp.member.controller;
 import java.security.Principal;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +20,7 @@ import com.mysite.spring_erp.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 // import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RequestMapping("/member")
 @RequiredArgsConstructor
@@ -78,9 +81,20 @@ public class MasterController {
         return "redirect:/";
     }
 
+    // 로그인 페이지
     @GetMapping("/login")
     public String login() {
         return "member/login";
+    }
+
+    // 로그인 성공 페이지
+    @GetMapping("/mypage")
+    @PreAuthorize("isAuthenticated()")
+    public String mypage(Model model, Principal principal) {
+        EmpMaster id = this.empMasterService.getEmpMaster(principal.getName());
+        model.addAttribute("id", id);
+
+        return "member/mypage";
     }
 
 }
