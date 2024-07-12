@@ -59,16 +59,16 @@
                     <td colspan="2" class="text-end">
                       <div class="wrap">
                         <input
+                          type="button"
+                          value="목록"
+                          class="button"
+                          th:onclick="|location.href='@{/board/list}'|"
+                        />
+                        <input
                           type="submit"
                           value="등록"
                           class="button"
                           id="modBtn"
-                        />
-                        <input
-                          type="button"
-                          value="취소"
-                          class="button"
-                          th:onclick="|location.href='@{/board/list}'|"
                         />
                       </div>
                     </td>

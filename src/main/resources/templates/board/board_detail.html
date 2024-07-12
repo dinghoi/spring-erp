@@ -84,12 +84,6 @@
                           th:data-uri="@{|/board/delete/${board.id}|}"
                         />
                       </span>
-                      <!-- <a
-                        class="delete fw-bold text-decoration-none text-secondary opacity-75"
-                        href="javascript:void(0);"
-                        th:data-uri="@{|/board/delete/${board.id}|}"
-                        >삭제</a
-                      > -->
                     </div>
                   </td>
                 </tr>
@@ -101,17 +95,7 @@
       </div>
     </div>
   </div>
-  <!-- <script layout:fragment="script" type="text/javascript">
-    const deleteBtnList = docuemnt.getElementsByClassName("delete");
-    Array.from(deleteBtnList).forEach((element) => {
-      element.addEventListener("onclick", () => {
-        if (confirm("정말 삭제하시겠습니까?")) {
-          // location.href = element.getAttribute("data-uri");
-          location.href = element.dataset.uri;
-        }
-      });
-    });
-  </script> -->
+  <!-- js -->
   <script layout:fragment="script" type="text/javascript">
     const deleteBtnList = document.getElementsByClassName("delete");
     Array.from(deleteBtnList).forEach((element) => {
