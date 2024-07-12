@@ -22,8 +22,11 @@
                     <div class="small">
                       <div>
                         <b>작성자</b> :
-                        <span th:text="${board.empMaster.name}"></span> |
-                        <b>조회수</b> :
+                        <span
+                          th:if="${board.empMaster.name != null}"
+                          th:text="${board.empMaster.name}"
+                        ></span>
+                        | <b>조회수</b> :
                         <span th:text="${board.readcnt}"></span> |
                         <b>등록일자</b> :
                         <span
@@ -54,32 +57,39 @@
                 <tr>
                   <td colspan="2" class="text-end">
                     <div class="wrap">
+                      <span>
+                        <input
+                          type="button"
+                          value="목록"
+                          class="cancel"
+                          th:onclick="|location.href='@{/board/list}'|"
+                        />
+                      </span>
                       <span
                         th:if="${board.empMaster.no != null and #authentication.getPrincipal().getUsername() == board.empMaster.no}"
                       >
                         <input
                           type="button"
                           value="수정"
-                          class="button"
+                          class="modify"
                           id="modBtn"
-                          th:onclick="|location.href='@{|/board/modify/${board.id}'|}"
+                          th:onclick="|location.href='@{|/board/modify/${board.id}'|}|"
                         />
                         <input
                           type="button"
                           value="삭제"
-                          class="button"
+                          class="delete"
                           id="delBtn"
-                          th:href="@{|/board/delete/${board.id}|}"
+                          th:onclick="|void(0)|"
+                          th:data-uri="@{|/board/delete/${board.id}|}"
                         />
                       </span>
-                      <span>
-                        <input
-                          type="button"
-                          value="취소"
-                          class="button"
-                          onclick="javascipt:history.back()"
-                        />
-                      </span>
+                      <!-- <a
+                        class="delete fw-bold text-decoration-none text-secondary opacity-75"
+                        href="javascript:void(0);"
+                        th:data-uri="@{|/board/delete/${board.id}|}"
+                        >삭제</a
+                      > -->
                     </div>
                   </td>
                 </tr>
@@ -91,4 +101,25 @@
       </div>
     </div>
   </div>
+  <!-- <script layout:fragment="script" type="text/javascript">
+    const deleteBtnList = docuemnt.getElementsByClassName("delete");
+    Array.from(deleteBtnList).forEach((element) => {
+      element.addEventListener("onclick", () => {
+        if (confirm("정말 삭제하시겠습니까?")) {
+          // location.href = element.getAttribute("data-uri");
+          location.href = element.dataset.uri;
+        }
+      });
+    });
+  </script> -->
+  <script layout:fragment="script" type="text/javascript">
+    const deleteBtnList = document.getElementsByClassName("delete");
+    Array.from(deleteBtnList).forEach((element) => {
+      element.addEventListener("click", () => {
+        if (confirm("정말 삭제하시겠습니까?")) {
+          location.href = element.dataset.uri;
+        }
+      });
+    });
+  </script>
 </html>

@@ -70,4 +70,9 @@ public class BoardService {
         board.setUpdated(LocalDateTime.now());
         this.boardRepository.save(board);
     }
+
+    // 게시글 삭제
+    public void deleteBoard(EmpBoard board) {
+        this.boardRepository.delete(board);
+    }
 }

@@ -76,7 +76,7 @@ public class BoardController {
     // 게시글 작성 폼
     @GetMapping("/create")
     @PreAuthorize("isAuthenticated()")
-    public String board_form(BoardForm boardForm) {
+    public String create(BoardForm boardForm) {
         return "board/board_form";
     }
 
@@ -93,7 +93,7 @@ public class BoardController {
     // BindingResult 객체를 사용하여 검증 결과를 확인
     @PostMapping("/create")
     @PreAuthorize("isAuthenticated()")
-    public String board_create(@Valid BoardForm boardForm, BindingResult bindingResult, Principal principal) {
+    public String create(@Valid BoardForm boardForm, BindingResult bindingResult, Principal principal) {
         if (bindingResult.hasErrors()) {
             return "board/board_form";
         }
@@ -106,7 +106,7 @@ public class BoardController {
     // 게시글 수정 폼
     @GetMapping("/modify/{id}")
     @PreAuthorize("isAuthenticated()")
-    public String board_modify(BoardForm boardForm, @PathVariable("id") int id, Principal principal) {
+    public String update(BoardForm boardForm, @PathVariable("id") int id, Principal principal) {
         EmpBoard board = this.boardService.getBoard(id);
 
         if (!board.getEmpMaster().getNo().equals(principal.getName())) {
@@ -121,7 +121,7 @@ public class BoardController {
     // 게시글 수정
     @PostMapping("/modify/{id}")
     @PreAuthorize("isAuthenticated()")
-    public String board_modify(@Valid BoardForm boardForm, BindingResult bindingResult, Principal principal,
+    public String update(@Valid BoardForm boardForm, BindingResult bindingResult, Principal principal,
             @PathVariable("id") int id) {
         if (bindingResult.hasErrors()) { // 입력값 검증
             return "board/board_form";
@@ -136,7 +136,20 @@ public class BoardController {
                 boardForm.getBoardContent());
 
         return String.format("redirect:/board/detail/%s", id);
+    }
 
+    // 게시글 삭제
+    // Principal : 로그인한 사용자 정보를 제공하는 인터페이스
+    @GetMapping("/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String delete(Principal principal, @PathVariable("id") int id) {
+        EmpBoard board = this.boardService.getBoard(id);
+        if (!board.getEmpMaster().getNo().equals(principal.getName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "게시글 작성자만 삭제할 수 있습니다.");
+        }
+        this.boardService.deleteBoard(board);
+
+        return "redirect:/board/list";
     }
 
 }
